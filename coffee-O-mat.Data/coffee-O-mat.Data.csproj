@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\coffee-O-mat.Persistence\coffee-O-mat.Persistence.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>coffee_O_mat.Data</RootNamespace>
+  </PropertyGroup>
+
+</Project>
