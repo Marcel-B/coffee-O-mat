@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>coffe_O_mat.Api</RootNamespace>
+    <RootNamespace>com.b_velop.coffee_O_mat.Api</RootNamespace>
   </PropertyGroup>
 
 </Project>
