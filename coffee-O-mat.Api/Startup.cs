@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using coffee_O_mat.Data.Contracts;
 using coffee_O_mat.Data.Repositories;
 using com.b_velop.coffee_O_mat.Api.Middlewares;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace com.b_velop.coffee_O_mat.Api
@@ -31,10 +33,18 @@ namespace com.b_velop.coffee_O_mat.Api
             services.AddScoped<ICoffeeOMatRepository, CoffeeOMatRepository>();
             
             var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+            var pw = string.Empty;
+            var fileInfo = new FileInfo(password);
+            if (fileInfo.Exists)
+            {
+                using var stream = fileInfo.OpenRead();
+                using var streamReader = new StreamReader(stream);
+                pw =  streamReader.ReadToEnd();
+            }
             var username = Environment.GetEnvironmentVariable("POSTGRES_USER");
             var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
 
-            var connection = $"Host={host};Port=5432;Username={username};Password={password};Database=coffeeOmat;";
+            var connection = $"Host={host};Port=5432;Username={username};Password={pw};Database=coffeeOmat;";
             
             services.AddDbContext<CoffeeContext>(options =>
             {
