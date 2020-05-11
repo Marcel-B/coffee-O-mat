@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\coffee-O-mat.Data\coffee-O-mat.Data.csproj" />
+    <ProjectReference Include="..\coffee-O-mat.Infrastructure\coffee-O-mat.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

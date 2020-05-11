@@ -1,7 +1,9 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using coffee_O_mat.Data.Contracts;
+using com.b_velop.coffee_O_mat.Infrastructure;
 using MediatR;
 
 namespace com.b_velop.coffee_O_mat.Application.Brew
@@ -43,6 +45,10 @@ namespace com.b_velop.coffee_O_mat.Application.Brew
                 };
                 _repo.AddBrew(brew);
                 var result = await _repo.SaveChanges();
+                
+                if(result == 0)
+                    throw new RestException(HttpStatusCode.BadRequest, "Error saving value");
+                
                 return Unit.Value;
             }
         }

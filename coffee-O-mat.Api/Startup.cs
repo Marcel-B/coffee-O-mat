@@ -1,5 +1,6 @@
 using coffee_O_mat.Data.Contracts;
 using coffee_O_mat.Data.Repositories;
+using com.b_velop.coffee_O_mat.Api.Middlewares;
 using com.b_velop.coffee_O_mat.Application.Brew;
 using com.b_velop.coffee_O_mat.Persistence.Context;
 using MediatR;
@@ -38,9 +39,10 @@ namespace com.b_velop.coffee_O_mat.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseErrorHandlingMiddleware();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
             }
 
             app.UseRouting();
@@ -48,7 +50,7 @@ namespace com.b_velop.coffee_O_mat.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
+                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello Coffee!"); });
             });
         }
     }

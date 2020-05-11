@@ -20,7 +20,6 @@ namespace com.b_velop.coffee_O_mat.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Unit>> PostBrew(Create.Command brew)
         {
-            _logger.LogInformation($"Incoming data:\nTemperature: {brew.Temp}\nTarget: {brew.Solltemp}\nOutput: {brew.Output}\nP: {brew.KP}\nI: {brew.KI}\nD: {brew.KD}");
             return await Mediator.Send(brew);
         }
 
@@ -29,5 +28,6 @@ namespace com.b_velop.coffee_O_mat.Api.Controllers
         {
             return await Mediator.Send(new List.Query());
         }
+        
     }
 }
