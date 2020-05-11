@@ -1,3 +1,4 @@
+using System;
 using coffee_O_mat.Data.Contracts;
 using coffee_O_mat.Data.Repositories;
 using com.b_velop.coffee_O_mat.Api.Middlewares;
@@ -23,20 +24,24 @@ namespace com.b_velop.coffee_O_mat.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddMediatR(typeof(List).Assembly);
             services.AddScoped<ICoffeeOMatRepository, CoffeeOMatRepository>();
+            
+            var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+            var username = Environment.GetEnvironmentVariable("POSTGRES_USER");
+            var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
+
+            var connection = $"Host={host};Port=5432;Username={username};Password={password};Database=coffeeOmat;";
+            
             services.AddDbContext<CoffeeContext>(options =>
             {
-                options.UseSqlite(Configuration.GetConnectionString("default"));
+                options.UseNpgsql(connection);
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseErrorHandlingMiddleware();
