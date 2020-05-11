@@ -4,6 +4,8 @@ using coffee_O_mat.Data.Contracts;
 using coffee_O_mat.Data.Repositories;
 using com.b_velop.coffee_O_mat.Api.Middlewares;
 using com.b_velop.coffee_O_mat.Application.Brew;
+using com.b_velop.coffee_O_mat.Application.Contracts;
+using com.b_velop.coffee_O_mat.Application.Services;
 using com.b_velop.coffee_O_mat.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -31,6 +33,11 @@ namespace com.b_velop.coffee_O_mat.Api
             services.AddControllers();
             services.AddMediatR(typeof(List).Assembly);
             services.AddScoped<ICoffeeOMatRepository, CoffeeOMatRepository>();
+            services.AddHttpClient<IForwardService, ForwardService>(opt =>
+            {
+                opt.BaseAddress = new Uri("http://blynk.remoteapp.de:8086");
+                opt.Timeout = TimeSpan.FromSeconds(5);
+            });
             
             var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
             var pw = string.Empty;
