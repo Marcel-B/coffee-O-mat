@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+    coffee-o-mat:
+        image: millegalb/coffee-o-mat:latest
+        networks:
+            - skynet
+        environment:
+            - POSTGRES_HOST=db_postgres
+            - POSTGRES_PASSWORD=/run/secrets/postgres_db_password
+            - POSTGRES_USER=admin
+        secrets:
+            - postgres_db_password
+        deploy:
+            replicas: 2
+            restart_policy:
+                condition: on-failure
+            labels:
+                - "traefik.enable=true"
+                - "traefik.http.middlewares.secHeader.headers.sslredirect=true"
+                - "traefik.http.middlewares.secHeader.headers.stsIncludeSubDomains=true"
+                - "traefik.http.middlewares.secHeader.headers.stsSeconds=31536000"
+                - "traefik.http.middlewares.secHeader.headers.isDevelopment=false"
+                - "traefik.http.middlewares.secHeader.headers.forceSTSHeader=true"
+                - "traefik.http.middlewares.secHeader.headers.stsPreload=true"
+                - "traefik.http.middlewares.secHeader.headers.featurePolicy=fullscreen"
+                - "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
+                - "traefik.http.routers.coffee-o-mat-http.entrypoints=web"
+                - "traefik.http.routers.coffee-o-mat-http.rule=Host(`coffee.qaybe.de`)"
+                - "traefik.http.routers.coffee-o-mat-http.middlewares=https-only@docker"
+
+                - "traefik.http.routers.coffee-o-mat-https.middlewares=testHeader@docker"
+                - "traefik.http.routers.coffee-o-mat-https.entrypoints=websecure"
+                - "traefik.http.routers.coffee-o-mat-https.rule=Host(`coffee.qaybe.de`)"
+                - "traefik.http.routers.coffee-o-mat-https.tls=true"
+                - "traefik.http.routers.coffee-o-mat-https.tls.certresolver=sec"
+
+                - "traefik.http.services.coffee-o-mat-service.loadbalancer.server.port=80"
+
+secrets:
+    postgres_db_password:
+        external: true
+networks:
+    skynet:
+        external: true
