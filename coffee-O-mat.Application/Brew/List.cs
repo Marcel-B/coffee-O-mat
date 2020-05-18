@@ -13,6 +13,7 @@ namespace com.b_velop.coffee_O_mat.Application.Brew
     {
         public class Query : IRequest<List<Domain.Models.Brew>>
         {
+            public int Seconds { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, List<Domain.Models.Brew>>
@@ -26,7 +27,8 @@ namespace com.b_velop.coffee_O_mat.Application.Brew
 
             public async Task<List<Domain.Models.Brew>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _repo.Brews().Where(b => b.Created > DateTime.Now.AddHours(-12)).ToListAsync(cancellationToken);
+                var dt = request.Seconds == 0 ? DateTime.Now.AddHours(-12) : DateTime.Now.AddSeconds(-request.Seconds);
+                return await _repo.Brews().Where(b => b.Created > dt).ToListAsync(cancellationToken);
             }
         }
     }

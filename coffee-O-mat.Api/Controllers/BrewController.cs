@@ -24,10 +24,9 @@ namespace com.b_velop.coffee_O_mat.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<List<Brew>> List()
+        public async Task<List<Brew>> List([FromQuery]int seconds)
         {
-            return await Mediator.Send(new List.Query());
+            return await Mediator.Send(new List.Query{Seconds = seconds});
         }
-        
-    }
+    } 
 }
