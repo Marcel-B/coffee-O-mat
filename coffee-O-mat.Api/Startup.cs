@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using coffee_O_mat.Data.Contracts;
 using coffee_O_mat.Data.Repositories;
 using com.b_velop.coffee_O_mat.Api.Middlewares;
@@ -11,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +33,16 @@ namespace com.b_velop.coffee_O_mat.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+            services.Configure<GzipCompressionProviderOptions>(options => 
+            {
+                options.Level = CompressionLevel.Optimal;
+            });
+          
             services.AddMediatR(typeof(List).Assembly);
             services.AddScoped<ICoffeeOMatRepository, CoffeeOMatRepository>();
             services.AddHttpClient<IForwardService, ForwardService>(opt =>
@@ -57,6 +69,14 @@ namespace com.b_velop.coffee_O_mat.Api
             {
                 options.UseNpgsql(connection);
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000", "http://localhost:3001");
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,6 +86,8 @@ namespace com.b_velop.coffee_O_mat.Api
             {
                 // app.UseDeveloperExceptionPage();
             }
+            app.UseCors("CorsPolicy");
+            app.UseResponseCompression();
 
             app.UseRouting();
 
